@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+   <body>
+   
+      <form method = "POST" id="authForm">
+         <div>
+            <p>Email <input type = "text" name = "email" /></p>
+            <p>Password <input type = "text" name = "pw" /></p>
+         </div>
+         
+         
+         <p><input type="submit" name="Log_in" value="Log in" style="WIDTH: 183pt"/></p>
+        
+         <p><input type = button style="WIDTH: 183pt; background-color:transparent;" value = "Sign up" name="Sign_up" onclick="location.href=
+            'register'" /></p>
+         <p>
+            {% if success==None %}
+               <h1>&nbsp;</h1>
+            {% else %}
+               <h2>{{success}}</h2>
+            {% endif %}
+         </p>
+         <p>
+            {% if error==None %}
+               <h3>&nbsp;</h3>
+            {% else %}
+               <h4>{{error}}</h4>
+            {% endif %}
+         </p>
+
+
+      </form>
+     
+      
+   </body>
+</html>
