@@ -1,5 +1,7 @@
 import pymysql
 import bcrypt
+from datetime import date
+from hashlib import md5
 
 class Database(object):
     def __init__(self):
@@ -46,14 +48,14 @@ class signup(Database):
     def __init__(self):
         super().__init__()
     #... 회원가입할 때 user, account table에 모두 저장
-    def add_email_data(self,user_email):
-        curs=self.order_db.cursor()
-        sql="INSERT INTO user(user_email) VALUES (%s)"
-        curs.execute(sql,user_email)
-        self.order_db.commit()
+    #def add_email_data(self,user_email):
+     #   curs=self.order_db.cursor()
+      #  sql="INSERT INTO user(user_email) VALUES (%s)"
+       # curs.execute(sql,user_email)
+        #self.order_db.commit()
         
 
-        curs.close()
+        #curs.close()
 
     def add_password(self,user_email,user_password): # insert로 바꿔야됨
         new_salt=bcrypt.gensalt()
@@ -105,24 +107,75 @@ class order(Database):
     def __init__(self):
         super().__init__()
         
-    def show_rest(self): # 1. 음식점 보여줌
+    def show_rest(self): # 음식점코드, 음식점 이름 보여주기 
         curs=self.order_db.cursor()
-        sql="select * from restaurant"
+        sql="select restaurant_code,restuarant_name from restaurant"
         curs.execute(sql)
         res_list=curs.fetchall()
         return res_list
-        
-    
-    def add_order_menu(self,order_code,restaurant_code,menu_code,amount,cost):
+    # 주문하기 클릭 -> 최소주문 금액 만족하는 check -> ok : ordercode생성 -> order -> order_menu 순서로 등록, 
+
+    #최소 주문금액 : 금액합치는 건 실행파일에서 하고, 해당 레스토랑 코드의 최소주문금액과 비교
+    def compare_minimum_price(self,price,restaurant_code):
         curs=self.order_db.cursor()
-        sql="insert into order (order_code) values(%s)"
-        curs.execute(sql,order_code) #먼저 order 엔티티에 order_code 입력
-        self.order_db.commit()
-        
-        sql="insert into order_menu values (%s,%s,%s,%s,%s)"
-        curs.execute(sql,(order_code,restaurant_code,menu_code,amount,cost))
+        sql="select * from restaurant where restaurant_code= %s"
+        curs.execute(sql,restaurant_code)
+        data=curs.fetchone()
+        if price <data['minimum_order_amount']:
+            return 0
+        else:
+            return 1 # 만족하면 1 반환
+
+    # 주문 코드 생성
+    def make_ordercode(self,user_email): #hashlib의 md5 메소드이용
+        curs=self.order_db.cursor()
+        sql="select * from user where user_email=%s"
+        curs.execute(sql,user_email)
+        data=curs.fetchone()
+        key = md5(data['user_name'].encode('utf8')).hexdigest()
+        return key
+
+    def add_order_data(self,order_code,user_email,restaurant_code):
+        # 여기에 date까지 1 page에서는 4개 칼럼값만 추가
+        curs=self.order_db.cursor()
+        today=str(date.today())
+        sql="INSERT INTO order(order_code,user_email,date,restaurant_code) VALUES (%s,%s,%s,%s)"
+        curs.execute(sql,(order_code,user_email,today,restaurant_code))
         self.order_db.commit()
         curs.close()
+
+    # menu list 반환 
+    def menu_list(self,restaurant_code): # checkbox에서 뭐받았는지 체크하게끔 run.py에서
+        lst=[]
+        curs=self.order_db.cursor()
+        sql="select * from menu where restaurant_code=%s"
+        curs.execute(sql,restaurant_code)
+        data=curs.fetchall()
+        
+        for x in data:
+            lst.append(data[2])
+
+        return lst
+        
+    # menu_name을 받아서 cost를 계산하는 함수 (리스트로 받을지,,각각 받아서 각각 계산할지)
+    #menu_name을 어차피 list로 저장할 거니까 list 하나씩 대입하면서 cost바로 계산 
+    #cost를 실행파일에서 계산할지 아니면 여기서..?
+    #def add_order_menu(self,)
+
+        
+
+
+
+    
+    def add_order_menu(self,order_code,menu_code,amount,cost):
+        curs=self.order_db.cursor()
+        
+        sql="insert into order_menu(order_code,menu_code,amount,cost) values (%s,%s,%s,%s)"
+        curs.execute(sql,(order_code,menu_code,amount,cost))
+        self.order_db.commit()
+        curs.close()
+
+    
     #최소주문금액
 
     
