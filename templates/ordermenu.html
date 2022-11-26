@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+    </head>
+    <script>
+        let price=0;
+        function add_price(p){
+            price=price+p;
+        }
+    </script>
+    <body>
+        <h2><!--여기는 restaurant.html에서 검색한 식당명을 다시 전달받아야함--></h2>
+        <span>최소 주문 금액: {{minimum_amount}}</span>
+        <div>메뉴판</div>
+        {% for menu in menus %}<!--여긴 menus 인자에 전달해주면 됨-->
+        <labe><input type="checkbox" id="menu" value="{{menu.menu_price}}">{{menu.menu_name}}</label>
+        {% endfor %}
+    </body>
+    
+</html>

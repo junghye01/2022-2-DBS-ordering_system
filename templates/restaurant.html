@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+    </head>
+    <body>
+        <table>
+            <caption>Restaurant list</caption>
+            <thead>
+                <tr>
+                    <th>식당명</th>
+                    <th>식당 코드</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!--이 템플릿 render 할 때 restaurants를 인자로 전달해줘!!-->
+                {% for res in restaurants %}
+                <tr>
+                    <td>{{res.restaurant_name}}</td>
+                    <td>{{res.restaurant_code}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <input type="text">
+        <button><a href="">검색</a></button>
+    </body>
+
+</html>

@@ -23,4 +23,12 @@ class Order:
     restaurant_code=''
     coupon_code=''
     
+class Menu:
+    menu_code=''
+    restaurant_code=''
+    menu_name=''
+    description=''
+    price=''
+    
+    
     
