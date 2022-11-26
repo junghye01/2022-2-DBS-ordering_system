@@ -1,6 +1,6 @@
 from flask import Flask, session, render_template, redirect, request, url_for
 from database import (Database,login,signup)
-from user import User
+from user import User,Menu
 app=Flask(__name__)
 
 
@@ -66,3 +66,7 @@ def home():
 if __name__=='__main__':
     app.run(port=5000,debug=True)
         
+        
+@app.route('/ordermenu')
+def order_menu():
+    return render_template('ordermenu.html',menus=)
