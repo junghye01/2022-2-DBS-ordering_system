@@ -5,7 +5,7 @@ class Database(object):
     def __init__(self):
         self.order_db=pymysql.connect(
             user='root',
-            password='@hyungsuk1234',
+            password='1234',
             host='localhost',
             db='food_ordering_system',
             charset='utf8'
@@ -52,14 +52,10 @@ class signup(Database):
         curs.execute(sql,user_email)
         self.order_db.commit()
         
-        curs=self.order_db.cursor()
-        sql='INSERT INTO account(user_email) VALUES (%s)'
-        curs.execute(sql,user_email)
-        self.order_db.commit()
 
         curs.close()
 
-    def add_password(self,user_email,user_password):
+    def add_password(self,user_email,user_password): # insert로 바꿔야됨
         new_salt=bcrypt.gensalt()
         new_pw=user_password.encode('utf-8')
         hashed_pw=bcrypt.hashpw(new_pw,new_salt)# 해시된 비밀번호
@@ -67,21 +63,16 @@ class signup(Database):
 
         curs=self.order_db.cursor()
         # pw 저장(decode된걸로 )
-        sql="UPDATE account set user_password=%s WHERE user_email=%s "
-        curs.execute(sql,(decode_hash_pw,user_email))
+        sql="INSERT INTO account(user_email,user_password) VALUES (%s,%s)"
+        curs.execute(sql,(user_email,decode_hash_pw))
         self.order_db.commit()
 
         curs.close()
 
     def add_user_info(self,user_email,user_name,user_phonenum):
         curs=self.order_db.cursor()
-        sql="UPDATE user SET user_name=%s where user_email=%s"
-        curs.execute(sql,(user_name,user_email))
-        self.order_db.commit()
-
-        curs=self.order_db.cursor()
-        sql="UPDATE user SET user_phonenumber=%s where user_email=%s"
-        curs.execute(sql,(user_phonenum,user_email))
+        sql="INSERT INTO user(user_email,user_name,user_phonenumber) VALUES (%s,%s,%s)"
+        curs.execute(sql,(user_email,user_name,user_phonenum))
         self.order_db.commit()
 
         curs.close()
@@ -116,7 +107,7 @@ class order(Database):
         
     def show_rest(self): # 1. 음식점 보여줌
         curs=self.order_db.cursor()
-        sql="select * from restaurant;"
+        sql="select * from restaurant"
         curs.execute(sql)
         res_list=curs.fetchall()
         return res_list
@@ -124,14 +115,17 @@ class order(Database):
     
     def add_order_menu(self,order_code,restaurant_code,menu_code,amount,cost):
         curs=self.order_db.cursor()
-        sql="isnert into `order`(order_code) values(%s);"
+        sql="insert into order (order_code) values(%s)"
         curs.execute(sql,order_code) #먼저 order 엔티티에 order_code 입력
         self.order_db.commit()
         
-        sql="insert into order_menu values (%s,%s,%s,%s,%s);"
-        curs.execute(sql,order_code,restaurant_code,menu_code,amount,cost) 
+        sql="insert into order_menu values (%s,%s,%s,%s,%s)"
+        curs.execute(sql,(order_code,restaurant_code,menu_code,amount,cost))
         self.order_db.commit()
         curs.close()
+    #최소주문금액
+
+    
 
 
 class payment(Database):
