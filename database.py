@@ -106,13 +106,46 @@ class login(Database):
 class order(Database):
     def __init__(self):
         super().__init__()
+
+    def restaurant_code_exists(self,restaurant_code):
+        curs=self.order_db.cursor()
+        sql="select * from restaurant where restaurant_code=%s"
+        curs.execute(sql,restaurant_code)
+        data=curs.fetchone()
+        curs.close()
+        if data:
+            return 1
+        else:
+            return 0 # 존재하지않으면 0
+    
+    def minimum_price(self,restaurant_code):
+        curs=self.order_db.cursor()
+        sql="select * from restaurant where restaurant_code=%s"
+        curs.execute(sql,restaurant_code)
+        data=curs.fetchone()
+        curs.close()
+        return data[5]
         
     def show_rest(self): # 음식점코드, 음식점 이름 보여주기 
         curs=self.order_db.cursor()
-        sql="select restaurant_code,restuarant_name from restaurant"
+        lst=[]
+        sql="select * from restaurant"
         curs.execute(sql)
         res_list=curs.fetchall()
+        for x in res_list:
+            a=[x[0],x[1]]
+            lst.append(a)
+        curs.close()
         return res_list
+
+    def get_restaurant_name(self,restaurant_code):
+        curs=self.order_db.cursor()
+        sql="select * from restaurant where restaurant_code=%s"
+        curs.execute(sql,restaurant_code)
+        data=curs.fetchone()
+        res_name=data[1]
+        curs.close()
+        return res_name
     # 주문하기 클릭 -> 최소주문 금액 만족하는 check -> ok : ordercode생성 -> order -> order_menu 순서로 등록, 
 
     #최소 주문금액 : 금액합치는 건 실행파일에서 하고, 해당 레스토랑 코드의 최소주문금액과 비교
@@ -160,14 +193,23 @@ class order(Database):
     # menu_name을 받아서 cost를 계산하는 함수 (리스트로 받을지,,각각 받아서 각각 계산할지)
     #menu_name을 어차피 list로 저장할 거니까 list 하나씩 대입하면서 cost바로 계산 
     #cost를 실행파일에서 계산할지 아니면 여기서..?
-    #def add_order_menu(self,)
+    def calculate_cost(self,menu,count): #menu, 수량 list로 받음
+        curs=self.order_db.cursor()
+        cost=[]
+        result=0
+        for i in enumerate(menu): 
+            sql="select * from menu where menu_name=%s"
+            curs.execute(sql,menu[i])
+            data=curs.fetchone()
+            result=data[4]*count[i]
+            cost.append(result)
 
-        
-
+        curs.close()
+        return cost
 
 
     
-    def add_order_menu(self,order_code,menu_code,amount,cost):
+    def add_order_menu(self,order_code,menu_code,amount,cost): #order menu table에 추가
         curs=self.order_db.cursor()
         
         sql="insert into order_menu(order_code,menu_code,amount,cost) values (%s,%s,%s,%s)"
@@ -176,7 +218,6 @@ class order(Database):
         curs.close()
 
     
-    #최소주문금액
 
     
 
