@@ -1,5 +1,6 @@
 from datetime import date
 import pymysql
+from database import order
 
 data='asi' # 이방식은 겹침.. 
 hash_list=[]
@@ -35,12 +36,8 @@ for x in data:
 
 print(lst)
 
-sql="select * from restaurant"
-lst2=[]
 
-data=curs.fetchall()
-for x in data:
-    
-print(data)
+res_list=order().show_rest()
 
-
+for x in res_list:
+    print(x[0],x[1])

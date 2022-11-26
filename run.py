@@ -1,6 +1,6 @@
 from flask import Flask, session, render_template, redirect, request, url_for
-from database import (Database,login,signup)
-from user import User
+from database import (Database,login,signup,order)
+from user import User,Order
 app=Flask(__name__)
 
 
@@ -23,7 +23,7 @@ def main():
             #return redirect(url_for('home'))
             # dict 형태로 user 정보 전달하기 
             success='로그인 성공!'
-            return redirect(url_for('home'))
+            return redirect(url_for('get_order'))
         else:
             error='존재하지 않는 이메일 또는 비밀번호입니다.'
             
@@ -63,6 +63,31 @@ def register(): # 성공하면 redirect(url_for('login'))
 def home():
     
     return render_template('home.html',name=User.name)
+
+@app.route('/order',methods=['GET','POST'])
+def get_order():
+    error=None
+    res_list=[]
+    minimum_price=0
+    menu_lst=[]
+    if request.method=='POST':
+        res_list=order().show_rest()
+     
+        restaurant_code=request.form.get('restaurant_code')
+
+        if order().restaurant_code_exists(restaurant_code):
+        
+            Order.restaurant_code=restaurant_code
+            Order.res_name=order().get_restaurant_name(restaurant_code)
+            minimum_price=order().minimum_price(restaurant_code)
+            menu_lst=order().menu_list(restaurant_code)
+
+        else:
+            error='존재하지 않는 식당코드입니다.'
+
+    return render_template('order_menu.html',error=error,res_list=res_list,res_name=Order.res_name,minimum_price=minimum_price)
+
+
 
 if __name__=='__main__':
     app.run(port=5000,debug=True)

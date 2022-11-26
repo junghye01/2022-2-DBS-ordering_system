@@ -7,12 +7,7 @@ class User:
     pw=''
     selection=1
     
-class order_menu:
-    order_code=''
-    restaurant_code=''
-    menu_code=''
-    amount=''
-    cost=''
+
     
 class Order:
     order_code=''
@@ -21,6 +16,9 @@ class Order:
     address=''
     request=''
     restaurant_code=''
+    res_name=""
     coupon_code=''
+
+
     
     

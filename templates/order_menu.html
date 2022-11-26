@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+   <body>
+   
+      <form action ="POST" id="authForm">
+        
+
+        <table class="table table-hover table-striped text-center" style=" width: 50%; border: 1px  solid #111114;">
+            <thread>
+                <tr>
+                    <center>
+                    <th>식당명</th>
+                    <th>식당&nbsp;코드</th>
+                    </center>
+                </tr>
+            </thread>
+            <tbody>
+                {% for x in res_list %}
+                <tr>
+                    <td><center>{{ x[0] }}</center></td>
+                    <td><center>{{ x[1] }}</center></td>
+                </tr>
+                { % endfor %}
+            </tbody>
+            
+        </table>
+        <div>
+            <p>restaurant&nbsp;code<input type="text" name='restaurant_code'/></p>
+        </div>
+        <p><input type="submit" name="search" value="search" style="WIDTH: 183pt"/></p>
+
+        <p>
+            {% if error==None%}
+                <!-- checkbox-->
+                <h1>식당명은 {{res_name}}</h1>
+                <h2>최소주문금액은 {{minimum_price}}</h2>
+                <p>menulist</p>
+                
+                
+            { % else %}
+                <h2>{{error}}</h2>
+            {% endif %}
+        </p>
+        
+       
+         
+        
+      </form>
+     
+      
+   </body>
+</html>
