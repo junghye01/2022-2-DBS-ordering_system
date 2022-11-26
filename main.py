@@ -23,11 +23,11 @@ while(initialmenu):
 #여기부턴 주문
 import datetime 
 
-import mysql.connector 
+#import mysql.connector 
 
-cnx = mysql.connector.connect(user='root', password='@hyungsuk1234', host='127.0.0.1', database='food_ordering_system', charset='utf8') 
+#cnx = mysql.connector.connect(user='root', password='@hyungsuk1234', host='127.0.0.1', database='food_ordering_system', charset='utf8') 
 
-cursor = cnx.cursor()
+#cursor = cnx.cursor()
 order_status=True
 order_code='E01503M0'
 sql="select * from restaurant;"

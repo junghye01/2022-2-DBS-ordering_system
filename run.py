@@ -42,9 +42,10 @@ def register(): # 성공하면 redirect(url_for('login'))
         pw=request.form.get('pw')
 
         if Database().email_not_exists(email): # 가입가능
-            signup().add_email_data(email)
-            signup().add_password(email,pw)
+            # signup().add_email_data(email)
             signup().add_user_info(email,name,phonenumber)
+            signup().add_password(email,pw)
+            
 
             User.name=name
             User.email=email
