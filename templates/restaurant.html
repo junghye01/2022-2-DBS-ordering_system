@@ -2,28 +2,32 @@
 <html>
     <head>
         <meta charset="utf-8">
+        <link rel="stylesheet" href="main.css">
     </head>
-    <body>
-
-        <table>
-        <caption>Restaurant list</caption>
-            <thead>
-                <tr>
-                    <th>식당명</th>
-                    <th>식당코드</th>
+    <body id="outer">
+        <div id="inner">
+            <table id="rest_list">
+            <caption>Restaurant list</caption>
+                <thead>
+                    <tr>
+                        <th>식당명</th>
+                        <th>식당코드</th>
+                        </tr>
+                </thead>
+                <tbody>
+                    {% for rest in restaurants %}
+                    <tr>
+                        <td>{{rest.name}}</td>
+                        <td>{{rest.code}}</td>
                     </tr>
-            </thead>
-            <tbody>
-            {% for rest in restaurants %}
-                <tr>
-                    <td>{{rest.name}}</td>
-                    <td>{{rest.code}}</td>
-                </tr>
-            </tbody>
-        </table>
-        <form action="run.py" method="POST">
-            <input type="text" name="restaurant" placeholder="식당명으로 검색하세요."><!--name 속성을 변수로 받으면 됨(restaurant)-->
-            <input type="submit" value="검색"/>
-        </form>
+                    {%endfor%}
+                </tbody>
+            </table>
+            <br>
+            <form action="url_for{{('')}}" method="POST">
+                <input type="text" id="restaurant" name="restaurant" placeholder="식당코드로 검색하세요."><!--name 속성을 변수로 받으면 됨 request.form['restaurant']이런 식으로-->
+                <input type="submit" value="검색"/>
+           </form>
+        </div>
     </body>
 </html>
