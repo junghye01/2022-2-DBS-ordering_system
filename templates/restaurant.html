@@ -5,24 +5,28 @@
     </head>
     <body>
 
-        <table>
-        <caption>Restaurant list</caption>
+        <table class="table table-hover table-striped text-center" style=" width: 50%; border: 1px  solid #111114;">
+        
             <thead>
                 <tr>
-                    <th>식당명</th>
+                    <center>
                     <th>식당코드</th>
+                    <th>식당명</th>   
+                    </center>
+                    
                     </tr>
             </thead>
             <tbody>
-            {% for rest in restaurants %}
+                {% for rest in res_list %}
                 <tr>
-                    <td>{{rest.name}}</td>
-                    <td>{{rest.code}}</td>
+                    <td><center>{{ rest[0] }}</center></td>
+                    <td><center>{{ rest[1] }}</center></td>
                 </tr>
+                {% endfor %}
             </tbody>
         </table>
-        <form action="run.py" method="POST">
-            <input type="text" name="restaurant" placeholder="식당명으로 검색하세요."><!--name 속성을 변수로 받으면 됨(restaurant)-->
+        <form action="POST" method="authForm">
+            <input type="text" name="restaurant" placeholder="식당코드로 검색하세요."><!--name 속성을 변수로 받으면 됨(restaurant)-->
             <input type="submit" value="검색"/>
         </form>
     </body>

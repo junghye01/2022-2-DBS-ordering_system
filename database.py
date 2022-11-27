@@ -128,13 +128,13 @@ class order(Database):
         
     def show_rest(self): # 음식점코드, 음식점 이름 보여주기 
         curs=self.order_db.cursor()
-        lst=[]
+        #lst=[]
         sql="select * from restaurant"
         curs.execute(sql)
         res_list=curs.fetchall()
-        for x in res_list:
-            a=[x[0],x[1]]
-            lst.append(a)
+       # for x in res_list:
+        #    a=[x[0],x[1]]
+         #   lst.append(a)
         curs.close()
         return res_list
 

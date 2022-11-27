@@ -23,7 +23,7 @@ def main():
             #return redirect(url_for('home'))
             # dict 형태로 user 정보 전달하기 
             success='로그인 성공!'
-            return redirect(url_for('get_order'))
+            return redirect(url_for('select'))
         else:
             error='존재하지 않는 이메일 또는 비밀번호입니다.'
             
@@ -64,28 +64,26 @@ def home():
     
     return render_template('home.html',name=User.name)
 
-@app.route('/order',methods=['GET','POST'])
-def get_order():
-    error=None
-    res_list=[]
-    minimum_price=0
-    menu_lst=[]
+@app.route('/select',methods=['GET','POST'])
+def select():  
+    error=None 
+    res_list=order().show_rest()
+
+
     if request.method=='POST':
         res_list=order().show_rest()
-     
-        restaurant_code=request.form.get('restaurant_code')
+        restaurant_code=request.form.get('restaurant')
 
         if order().restaurant_code_exists(restaurant_code):
-        
             Order.restaurant_code=restaurant_code
+            
             Order.res_name=order().get_restaurant_name(restaurant_code)
-            minimum_price=order().minimum_price(restaurant_code)
-            menu_lst=order().menu_list(restaurant_code)
+            return redirect(url_for('home'))
 
         else:
-            error='존재하지 않는 식당코드입니다.'
+            error='존재하지 않는 식당 코드입니다.'
 
-    return render_template('order_menu.html',error=error,res_list=res_list,res_name=Order.res_name,minimum_price=minimum_price)
+    return render_template('restaurant.html',res_list=res_list,error=error,restaurant_name=Order.res_name)
 
 
 
