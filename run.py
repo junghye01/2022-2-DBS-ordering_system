@@ -128,6 +128,12 @@ def ordermenu():
         Order.total_cost=sum(cost) # 총 주문금액
         print(Order.total_cost)
         if order().compare_minimum_price(Order.total_cost,Order.restaurant_code): #최소주문금액만족
+            Order.order_code=order().make_ordercode(User.email) #주문코드 생성
+            # order 테이블에 저장
+            order().add_order_data(Order.order_code,User.email,Order.restaurant_code)
+            # order_menu테이블에 저장 menu_code반환하는거 짜야할듯..(추가해야함)
+
+
             return (redirect(url_for('home'))) # 주문목록 확인 및 결제창
 
         else:
