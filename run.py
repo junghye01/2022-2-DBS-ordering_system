@@ -102,11 +102,10 @@ def ordermenu():
         for x in lst:
             if request.form.get(x):
                 lst2.append(x) # 주문받은 메뉴 저장
-                #amount=request.form.get(x) # textbox가 1개만 인식돼서 생긴문제
-                #print(amount)
-                #amount_list.append(amount)
+                
             else:
                 continue
+
         for i in range(len(lst)):
             t_name=lst[i]+'1'
             amount=request.form.get(t_name)
@@ -115,22 +114,28 @@ def ordermenu():
             else:
                 continue
         
+        #메뉴,수량 배열
+        Order.final_list=[]
+        new_list=[]
+        for i in range(len(lst2)):
+            new_list=[lst2[i],amount_list[i]]
+            Order.final_list.append(new_list)
                 
-        print(lst)
-        print(lst2)
-        print(amount_list)
+        #print(lst)
+        #print(lst2)
+        #print(amount_list)
         
         cost=order().calculate_cost(lst2,amount_list) # 각 메뉴마다 금액
-        print(cost)
+        #print(cost)
         Order.total_cost=sum(cost) # 총 주문금액
-        print(Order.total_cost)
+        #print(Order.total_cost)
         
         if order().compare_minimum_price(Order.total_cost,Order.restaurant_code): #최소주문금액만족
             Order.order_code=order().make_ordercode(User.email) #주문코드 생성
             # order 테이블에 저장
             Order.date=date.today()
             order().add_order_data(Order.order_code,User.email,Order.date,Order.restaurant_code)
-            # order_menu테이블에 저장 menu_code반환하는거 짜야할듯..(추가해야함)
+            # 
             Order.menu_code=order().get_menucode(lst2)
             for i in range(len(lst2)):
                 order().add_order_menu(Order.order_code,Order.menu_code[i],amount_list[i],cost[i])
@@ -157,10 +162,10 @@ def final():
         payment=request.form.get('payment')
         coupon_code=request.form.get('coupon_code')
 
-        # 결제금액 계산
+        
         Order.discount_price=order().get_discount(coupon_code)
         
-        Order.total_cost=Order.total_cost-Order.discount_price
+        Order.payment_amount=Order.total_cost-Order.discount_price # payment_amount : 결제금액
         Order.address=address
         Order.textrequest=textrequest
         Order.payment=payment
@@ -177,8 +182,9 @@ def final():
 
 @app.route('/realfinal',methods=['GET','POST'])
 def realfinal():
+    
  
-    return render_template('home.html',name=User.name,order_code=Order.order_code,address=Order.address,textrequest=Order.textrequest,payment=Order.payment,payment_amount=Order.total_cost)
+    return render_template('home.html',name=User.name,order_code=Order.order_code,address=Order.address,textrequest=Order.textrequest,payment=Order.payment,final_list=Order.final_list,total_cost=Order.total_cost,discount_price=Order.discount_price,payment_amount=Order.payment_amount)
 
 
 

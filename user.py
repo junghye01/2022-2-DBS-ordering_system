@@ -26,6 +26,8 @@ class Order:
     textrequest=''
     address=''
     payment=''
+    payment_amount=0
+    final_list=[]
 
     
     
