@@ -16,8 +16,9 @@ class Order:
     address=''
     request=''
     restaurant_code=''
-    res_name=""
+    res_name=''
     coupon_code=''
+    res_name=''
 
 
     
