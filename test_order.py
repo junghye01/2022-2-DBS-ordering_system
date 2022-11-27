@@ -1,6 +1,8 @@
-from datetime import date
+from datetime import (date,datetime)
 import pymysql
 from database import order
+from hashlib import md5
+
 
 data='asi' # 이방식은 겹침.. 
 hash_list=[]
@@ -52,3 +54,9 @@ for x in my_menu:
 aa=[0,102,2]
 tx=['y'+str(i) for i in range(len(aa))]
 print(tx)
+
+
+xx='김정혜'
+xxxy=md5(xx.encode('utf-8')).hexdigest()
+xxxy=xxxy+str(datetime.now()).replace(':','')[11:-7]
+print(xxxy)

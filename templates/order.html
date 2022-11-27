@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+    </head>
+    <body>
+        <form method="POST" id="authForm">
+            <h1>주문</h1>
+            <div><h2>주문코드: {{order_code}}</h2></div>
+            <div><h6>이메일: {{email}}</h6></div>
+            <div><h5>주문날짜:{{date}}</h5></div>
+            <div>
+                <label>주소:
+                <input type="text" name="address"></label>
+            </div>
+            <div>
+                <label>요청사항:
+                <input type="text" name="textrequest"></label>
+            </div>
+            <div>
+                <h4>식당코드:{{restaurant_code}}</h4>
+            </div>
+            <div>
+                <label>결제방식
+                    <input type="radio" name="payment" value="카드결제">카드결제
+                    <input type="radio" name="payment" value="만나서결제">만나서 결제
+                </label>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>쿠폰코드</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for x in coupon_list %}
+                    <tr>
+                        <td>{{ x[0] }} </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div>
+                <label>쿠폰코드입력:
+                    <input type="text" name="coupon_code">
+                </label>
+            </div>
+            
+            <p>
+                <button type="submit" name="pay_button" value="확인">확인</button>
+            </p>
+        </form>    
+    </body>
+</html>

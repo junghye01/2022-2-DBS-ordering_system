@@ -1,6 +1,6 @@
 import pymysql
 import bcrypt
-from datetime import date
+from datetime import (date,datetime)
 from hashlib import md5
 
 class Database(object):
@@ -165,7 +165,7 @@ class order(Database):
         sql="select * from menu where restaurant_code=%s"
         curs.execute(sql,restaurant_code)
         data=curs.fetchall()
-        
+        curs.close()
         for x in data:
             lst.append(x[2])
 
@@ -202,15 +202,16 @@ class order(Database):
         sql="select * from user where user_email=%s"
         curs.execute(sql,user_email)
         data=curs.fetchone()
-        key = md5(data['user_name'].encode('utf8')).hexdigest()
+        key = md5(data[1].encode('utf8')).hexdigest()
+        key=key+str(datetime.now()).replace(':','')[11:-7]
         return key
 
-    def add_order_data(self,order_code,user_email,restaurant_code):
+    def add_order_data(self,order_code,user_email,date,restaurant_code):
         # 여기에 date까지 1 page에서는 4개 칼럼값만 추가
         curs=self.order_db.cursor()
-        today=str(date.today())
-        sql="INSERT INTO order(order_code,user_email,date,restaurant_code) VALUES (%s,%s,%s,%s)"
-        curs.execute(sql,(order_code,user_email,today,restaurant_code))
+        
+        sql="INSERT INTO `order`(order_code,user_email,`date`,restaurant_code) VALUES (%s,%s,%s,%s)"
+        curs.execute(sql,(order_code,user_email,date,restaurant_code))
         self.order_db.commit()
         curs.close()
 
@@ -231,7 +232,47 @@ class order(Database):
         self.order_db.commit()
         curs.close()
 
-    
+    def show_coupon_code(self):
+        curs=self.order_db.cursor()
+        sql="select * from coupon"
+        curs.execute(sql)
+        data=curs.fetchall()
+        curs.close()
+        return data
+
+    def get_discount(self,coupon_code):
+        curs=self.order_db.cursor()
+        sql="select * from coupon where coupon_code=%s"
+        curs.execute(sql,coupon_code)
+        data=curs.fetchone()
+        return data[1]
+
+    def get_menucode(self,menu_lst): # checkbox에서 뭐받았는지 체크하게끔 run.py에서
+        lst=[]
+        curs=self.order_db.cursor()
+        for x in menu_lst:
+            sql="select * from menu where menu_name=%s"
+            curs.execute(sql,x)
+            data=curs.fetchone()
+            lst.append(data[0])
+        curs.close()
+
+        return lst
+
+    def update_order(self,order_code,address,request,coupon_code):
+        curs=self.order_db.cursor()
+        sql="update `order` set address= %s, requests=%s,coupon_code=%s where order_code=%s"
+        curs.execute(sql,(address,request,coupon_code,order_code))
+        self.order_db.commit()
+        curs.close()
+
+    def add_payment_data(self,order_code,method,price):
+        curs=self.order_db.cursor()
+        sql="insert into payment(order_code,payment_method,payment_amount) values (%s,%s,%s)"
+        curs.execute(sql,(order_code,method,price))
+        self.order_db.commit()
+        curs.close()
+
 
     
 

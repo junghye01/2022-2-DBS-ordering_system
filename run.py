@@ -1,6 +1,7 @@
 from flask import Flask, session, render_template, redirect, request, url_for
 from database import (Database,login,signup,order)
 from user import User,Order
+from datetime import date
 app=Flask(__name__)
 
 
@@ -127,14 +128,19 @@ def ordermenu():
         print(cost)
         Order.total_cost=sum(cost) # 총 주문금액
         print(Order.total_cost)
+        
         if order().compare_minimum_price(Order.total_cost,Order.restaurant_code): #최소주문금액만족
             Order.order_code=order().make_ordercode(User.email) #주문코드 생성
             # order 테이블에 저장
-            order().add_order_data(Order.order_code,User.email,Order.restaurant_code)
+            Order.date=date.today()
+            order().add_order_data(Order.order_code,User.email,Order.date,Order.restaurant_code)
             # order_menu테이블에 저장 menu_code반환하는거 짜야할듯..(추가해야함)
+            Order.menu_code=order().get_menucode(lst2)
+            for i in range(len(lst2)):
+                order().add_order_menu(Order.order_code,Order.menu_code[i],amount_list[i],cost[i])
 
 
-            return (redirect(url_for('home'))) # 주문목록 확인 및 결제창
+            return (redirect(url_for('final'))) # 주문목록 확인 및 결제창
 
         else:
             error='최소주문금액은'+str(Order.minimum_amount)+',주문금액은'+str(Order.total_cost)
@@ -144,8 +150,42 @@ def ordermenu():
 
         
             
-            
-            
+@app.route('/final',methods=['GET','POST'])
+def final():
+    
+  
+    coupon_list=order().show_coupon_code()
+    if request.method=='POST':
+        address=request.form.get('address')
+        textrequest=request.form.get('textrequest')
+        payment=request.form.get('payment')
+        coupon_code=request.form.get('coupon_code')
+
+        # 결제금액 계산
+        Order.discount_price=order().get_discount(coupon_code)
+        
+        Order.total_cost=Order.total_cost-Order.discount_price
+        Order.address=address
+        Order.textrequest=textrequest
+        Order.payment=payment
+        #order 테이블엔 address,request,coupon_code update
+        order().update_order(Order.order_code,address,textrequest,coupon_code)
+        #payment에는 싹다 insert
+        order().add_payment_data(Order.order_code,payment,Order.total_cost)
+        return redirect(url_for('home'))
+
+
+
+
+    return render_template('order.html',order_code=Order.order_code,email=User.email,date=Order.date,restaurant_code=Order.restaurant_code,coupon_list=coupon_list)
+
+@app.route('/realfinal',methods=['GET','POST'])
+def realfinal():
+    msg=None
+    if request.method=='POST':
+        msg='결제하시겠습니까?'
+    return render_template('home.html',User.name,Order.order_code,Order.address,Order.textrequest,Order.payment,Order.total_cost)
+
 
 
 if __name__=='__main__':

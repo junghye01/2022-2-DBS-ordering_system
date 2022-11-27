@@ -21,7 +21,11 @@ class Order:
     minimum_amount=0
     cost=[]
     total_cost=0
-
+    menu_code=[]
+    discount_price=0
+    textrequest=''
+    address=''
+    payment=''
 
     
     
