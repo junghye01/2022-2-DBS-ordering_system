@@ -60,10 +60,7 @@ def register(): # 성공하면 redirect(url_for('login'))
 
     return render_template('register.html',success=success,error=error)
 
-@app.route('/home',methods=['GET','POST'])
-def home():
-    
-    return render_template('home.html',name=User.name)
+
 
 @app.route('/select',methods=['GET','POST'])
 def select():  
@@ -75,16 +72,15 @@ def select():
         res_list=order().show_rest()
         restaurant_code=request.form.get('restaurant')
 
-        if order().restaurant_code_exists(restaurant_code):
-            Order.restaurant_code=restaurant_code
+       
+        Order.restaurant_code=restaurant_code
             
-            Order.res_name=order().get_restaurant_name(restaurant_code)
-            return redirect(url_for('ordermenu'))
+        Order.res_name=order().get_restaurant_name(restaurant_code)
+        return redirect(url_for('ordermenu'))
 
-        else:
-            error='존재하지 않는 식당 코드입니다.'
+       
 
-    return render_template('restaurant.html',res_list=res_list,error=error,restaurant_name=Order.res_name)
+    return render_template('restaurant.html',res_list=res_list,restaurant_name=Order.res_name)
 
 @app.route('/ordermenu',methods=['GET','POST'])
 def ordermenu():
@@ -172,7 +168,7 @@ def final():
         order().update_order(Order.order_code,address,textrequest,coupon_code)
         #payment에는 싹다 insert
         order().add_payment_data(Order.order_code,payment,Order.total_cost)
-        return redirect(url_for('home'))
+        return redirect(url_for('realfinal'))
 
 
 
@@ -181,10 +177,8 @@ def final():
 
 @app.route('/realfinal',methods=['GET','POST'])
 def realfinal():
-    msg=None
-    if request.method=='POST':
-        msg='결제하시겠습니까?'
-    return render_template('home.html',User.name,Order.order_code,Order.address,Order.textrequest,Order.payment,Order.total_cost)
+ 
+    return render_template('home.html',name=User.name,order_code=Order.order_code,address=Order.address,textrequest=Order.textrequest,payment=Order.payment,payment_amount=Order.total_cost)
 
 
 
