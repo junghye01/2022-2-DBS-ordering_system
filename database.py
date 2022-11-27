@@ -175,7 +175,7 @@ class order(Database):
         curs=self.order_db.cursor()
         cost=[]
         result=0
-        for i in enumerate(menu): 
+        for i in range(len(menu)): 
             sql="select * from menu where menu_name=%s"
             curs.execute(sql,menu[i])
             data=curs.fetchone()

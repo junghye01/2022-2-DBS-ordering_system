@@ -89,9 +89,8 @@ def select():
 def ordermenu():
     error=None
     menu_list=order().show_menu(Order.restaurant_code)
-    amount_list=[]
-    cost=[]
-    total_cost=0
+    
+    #total_cost=0
     minimum_amount=order().minimum_price(Order.restaurant_code) # 최소주문금액
 
     if request.method=='POST':
@@ -101,20 +100,28 @@ def ordermenu():
 
         lst=order().show_menu_list(Order.restaurant_code) # 가게 메뉴 리스트
         lst2=[]
+        chk=0
         amount_list=[]
         for x in lst:
             if request.form.get(x):
                 lst2.append(x) # 주문받은 메뉴 저장
-                amount=request.form.get('amount')
-                amount_list.append(amount) #수량 받아서 리스트에 저장
-
+                chk=1
+                if chk==1:
+                    amount=request.form.get('amount')
+                    amount_list.append(amount) #수량 받아서 리스트에 저장
+        print(lst)
+        print(lst2)
+        print(amount_list)
+        
         cost=order().calculate_cost(lst2,amount_list) # 각 메뉴마다 금액
-        total_cost=sum(cost)
-        if order().compare_minimum_price(total_cost,Order.restaurant_code): #최소주문금액만족
+        print(cost)
+        Order.total_cost=sum(cost) # 총 주문금액
+        print(Order.total_cost)
+        if order().compare_minimum_price(Order.total_cost,Order.restaurant_code): #최소주문금액만족
             return (redirect(url_for('home'))) # 주문목록 확인 및 결제창
 
         else:
-            error='최소주문금액은'+str(Order.minimum_amount)+',주문금액은'+str(total_cost)
+            error='최소주문금액은'+str(Order.minimum_amount)+',주문금액은'+str(Order.total_cost)
 
 
     return render_template('ordermenu.html',error=error,restaurant_name=Order.res_name,minimum_amount=minimum_amount,menu_list=menu_list )

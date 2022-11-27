@@ -20,6 +20,7 @@ class Order:
     coupon_code=''
     minimum_amount=0
     cost=[]
+    total_cost=0
 
 
     
