@@ -41,3 +41,10 @@ res_list=order().show_rest()
 
 for x in res_list:
     print(x[0],x[1])
+restaurant_code='AAAAAAAB'
+min_price=order().minimum_price(restaurant_code)
+#print(min_price)
+my_menu=order().show_menu_list(restaurant_code)
+print(my_menu)
+for x in my_menu:
+    print(x)

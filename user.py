@@ -18,6 +18,8 @@ class Order:
     restaurant_code=''
     res_name=""
     coupon_code=''
+    minimum_amount=0
+    cost=[]
 
 
     

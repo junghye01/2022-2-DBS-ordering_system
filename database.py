@@ -118,13 +118,15 @@ class order(Database):
         else:
             return 0 # 존재하지않으면 0
     
-    def minimum_price(self,restaurant_code):
+    def minimum_price(self,restaurant_code): # 최소주문금액 조회 
         curs=self.order_db.cursor()
         sql="select * from restaurant where restaurant_code=%s"
         curs.execute(sql,restaurant_code)
         data=curs.fetchone()
         curs.close()
-        return data[5]
+        min_price=data[5]
+
+        return min_price
         
     def show_rest(self): # 음식점코드, 음식점 이름 보여주기 
         curs=self.order_db.cursor()
@@ -138,7 +140,16 @@ class order(Database):
         curs.close()
         return res_list
 
-    def get_restaurant_name(self,restaurant_code):
+    def show_menu(self,restaurant_code):
+        curs=self.order_db.cursor()
+        sql="select * from menu where restaurant_code=%s"
+        curs.execute(sql,restaurant_code)
+        menu_list=curs.fetchall()
+
+        curs.close()
+        return menu_list
+
+    def get_restaurant_name(self,restaurant_code): # 굳이 필요없..?
         curs=self.order_db.cursor()
         sql="select * from restaurant where restaurant_code=%s"
         curs.execute(sql,restaurant_code)
@@ -148,9 +159,35 @@ class order(Database):
         return res_name
     # 주문하기 클릭 -> 최소주문 금액 만족하는 check -> ok : ordercode생성 -> order -> order_menu 순서로 등록, 
 
+    def show_menu_list(self,restaurant_code): # checkbox에서 뭐받았는지 체크하게끔 run.py에서
+        lst=[]
+        curs=self.order_db.cursor()
+        sql="select * from menu where restaurant_code=%s"
+        curs.execute(sql,restaurant_code)
+        data=curs.fetchall()
+        
+        for x in data:
+            lst.append(x[2])
+
+        return lst
+
+    def calculate_cost(self,menu,count): #menu, 수량 list로 받음
+        curs=self.order_db.cursor()
+        cost=[]
+        result=0
+        for i in enumerate(menu): 
+            sql="select * from menu where menu_name=%s"
+            curs.execute(sql,menu[i])
+            data=curs.fetchone()
+            result=data[4]*int(count[i])
+            cost.append(result)
+
+        curs.close()
+        return cost
+
     #최소 주문금액 : 금액합치는 건 실행파일에서 하고, 해당 레스토랑 코드의 최소주문금액과 비교
     def compare_minimum_price(self,price,restaurant_code):
-        curs=self.order_db.cursor()
+        curs=self.order_db.cursor(pymysql.cursors.DictCursor)
         sql="select * from restaurant where restaurant_code= %s"
         curs.execute(sql,restaurant_code)
         data=curs.fetchone()
@@ -177,36 +214,13 @@ class order(Database):
         self.order_db.commit()
         curs.close()
 
-    # menu list 반환 
-    def menu_list(self,restaurant_code): # checkbox에서 뭐받았는지 체크하게끔 run.py에서
-        lst=[]
-        curs=self.order_db.cursor()
-        sql="select * from menu where restaurant_code=%s"
-        curs.execute(sql,restaurant_code)
-        data=curs.fetchall()
-        
-        for x in data:
-            lst.append(data[2])
-
-        return lst
+  
+    
         
     # menu_name을 받아서 cost를 계산하는 함수 (리스트로 받을지,,각각 받아서 각각 계산할지)
     #menu_name을 어차피 list로 저장할 거니까 list 하나씩 대입하면서 cost바로 계산 
     #cost를 실행파일에서 계산할지 아니면 여기서..?
-    def calculate_cost(self,menu,count): #menu, 수량 list로 받음
-        curs=self.order_db.cursor()
-        cost=[]
-        result=0
-        for i in enumerate(menu): 
-            sql="select * from menu where menu_name=%s"
-            curs.execute(sql,menu[i])
-            data=curs.fetchone()
-            result=data[4]*count[i]
-            cost.append(result)
-
-        curs.close()
-        return cost
-
+   
 
     
     def add_order_menu(self,order_code,menu_code,amount,cost): #order menu table에 추가

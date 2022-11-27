@@ -4,7 +4,7 @@
         <meta charset="utf-8">
     </head>
     <body>
-
+        <form method="POST" id="authForm">
         <table class="table table-hover table-striped text-center" style=" width: 50%; border: 1px  solid #111114;">
         
             <thead>
@@ -25,9 +25,16 @@
                 {% endfor %}
             </tbody>
         </table>
-        <form action="POST" method="authForm">
+       
             <input type="text" name="restaurant" placeholder="식당코드로 검색하세요."><!--name 속성을 변수로 받으면 됨(restaurant)-->
             <input type="submit" value="검색"/>
+            <p>
+                {% if error==None %}
+                    <h3>&nbsp;</h3>
+                {% else %}
+                    <h4>{{error}}</h4>
+                {% endif %}
+            </p>
         </form>
     </body>
 </html>
