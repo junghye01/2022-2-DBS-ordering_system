@@ -124,7 +124,6 @@ class order(Database):
         curs.execute(sql,restaurant_code)
         data=curs.fetchone()
         curs.close()
-        data[5]
 
         return data[5]
         
