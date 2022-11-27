@@ -124,9 +124,9 @@ class order(Database):
         curs.execute(sql,restaurant_code)
         data=curs.fetchone()
         curs.close()
-        min_price=data[5]
+        data[5]
 
-        return min_price
+        return data[5]
         
     def show_rest(self): # 음식점코드, 음식점 이름 보여주기 
         curs=self.order_db.cursor()

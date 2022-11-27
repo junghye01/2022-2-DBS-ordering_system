@@ -48,3 +48,7 @@ my_menu=order().show_menu_list(restaurant_code)
 print(my_menu)
 for x in my_menu:
     print(x)
+
+aa=[0,102,2]
+tx=['y'+str(i) for i in range(len(aa))]
+print(tx)

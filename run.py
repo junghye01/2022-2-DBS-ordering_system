@@ -100,15 +100,25 @@ def ordermenu():
 
         lst=order().show_menu_list(Order.restaurant_code) # 가게 메뉴 리스트
         lst2=[]
-        chk=0
+        text_list=['t'+str(i) for i in range(len(lst))] # 이름만 텍스트상자별로 다르게 
         amount_list=[]
         for x in lst:
             if request.form.get(x):
                 lst2.append(x) # 주문받은 메뉴 저장
-                chk=1
-                if chk==1:
-                    amount=request.form.get('amount')
-                    amount_list.append(amount) #수량 받아서 리스트에 저장
+                #amount=request.form.get(x) # textbox가 1개만 인식돼서 생긴문제
+                #print(amount)
+                #amount_list.append(amount)
+            else:
+                continue
+        for i in range(len(lst)):
+            t_name=lst[i]+'1'
+            amount=request.form.get(t_name)
+            if amount:
+                amount_list.append(amount)
+            else:
+                continue
+        
+                
         print(lst)
         print(lst2)
         print(amount_list)
