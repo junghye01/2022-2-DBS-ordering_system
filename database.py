@@ -96,7 +96,10 @@ class login(Database):
         curs.execute(sql,email_text)
         data=curs.fetchone()
         curs.close()
-        check_pw=bcrypt.checkpw(input_pw,data['user_password'].encode('utf-8'))
+        if not data:
+            check_pw=False
+        else:
+            check_pw=bcrypt.checkpw(input_pw,data['user_password'].encode('utf-8'))
         return check_pw
 
 
