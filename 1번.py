@@ -14,7 +14,7 @@ curs=conn.cursor()
 
 
 print("###1-1###")
-print('Find all order codes for the date entered')
+print('Enter a date to view the order code for a specific date')
 date=input('date:')
 sql1="select order_code from `order` where date=%s"
 curs.execute(sql1,date)
@@ -24,18 +24,19 @@ if sql1_result:
         print(x[0])
 else:
     print('There are no orders on that date')
-print('\n\n')
+print('\n')
 
 print("###1-2###")
 print('Enter two tables which you want to Natural join')
 
-table1,table2=input('enter two tables separated by " ":').split() 
+table1,table2=input('enter two tables separated by " "(space):').split() 
+# 존재하는 table인지 검사하기 위해
 tables=[]
 sql2_2="show tables"
 curs.execute(sql2_2)
 table_result=curs.fetchall()
 for x in table_result:
-    tables.append(x[0])
+    tables.append(x[0]) # tables : 테이블 목록
 
 if table1 in tables and table2 in tables: # table 목록에 존재하는 table이면
     sql2="select * from {0} natural join {1}".format(table1,table2)
@@ -49,11 +50,11 @@ if table1 in tables and table2 in tables: # table 목록에 존재하는 table�
 else:
     print('table name does not exist')
     
+print('\n')
 
 
 
 
-print('\n\n')
 print("###1-3###")
 print('Enter the code of the restaurant you are curious about if there is an expensive menu than all the menus in ‘AAAAAAAB’ ')
 res_code=input('restaurant code: ')
@@ -62,29 +63,23 @@ res_code=input('restaurant code: ')
 sql3_3="select * from restaurant where restaurant_code=%s"
 curs.execute(sql3_3,res_code)
 flag=curs.fetchone()
-if flag:
+if flag: # 존재하는 레스토링 코드면
     sql3="select menu_name from menu where restaurant_code=%s and menu_price > all(select menu_price from menu where restaurant_code= 'AAAAAAAB') "
     curs.execute(sql3,res_code)
     sql3_result=curs.fetchall()
-    if sql3_result:
+    if sql3_result: # 해당 값이 존재하면
         print('results are below: ')
         for x in sql3_result:  
             print(x[0])
     else:
-        print('no more expensive menu than AAAAAAAB')
+        print('No more expensive menu than AAAAAAAB')
 
 else:
-    print('no restaurant code exists')
+    print('No restaurant code exists')
 
 
+print('\n')
 
-
-
-
-
-
-
-print('\n\n')
 print("###1-4###")
 
 rest_name=input('enter the restaurant name you want to change the location to: ')
@@ -107,6 +102,6 @@ if flag:
     print(data)
 
 else:
-    print('no restaurant name exists')
+    print('No restaurant name exists')
 
 curs.close()

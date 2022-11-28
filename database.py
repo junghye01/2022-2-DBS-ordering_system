@@ -47,15 +47,7 @@ class Database(object):
 class signup(Database):
     def __init__(self):
         super().__init__()
-    #... 회원가입할 때 user, account table에 모두 저장
-    #def add_email_data(self,user_email):
-     #   curs=self.order_db.cursor()
-      #  sql="INSERT INTO user(user_email) VALUES (%s)"
-       # curs.execute(sql,user_email)
-        #self.order_db.commit()
-        
-
-        #curs.close()
+    
 
     def add_password(self,user_email,user_password): # insert로 바꿔야됨
         new_salt=bcrypt.gensalt()
@@ -148,14 +140,14 @@ class order(Database):
         curs.close()
         return menu_list
 
-    def get_restaurant_name(self,restaurant_code): # 굳이 필요없..?
+    def get_restaurant_name(self,restaurant_code): # 레스토랑 이름 
         curs=self.order_db.cursor()
         sql="select * from restaurant where restaurant_code=%s"
         curs.execute(sql,restaurant_code)
         data=curs.fetchone()
-        res_name=data[1]
+        #res_name=data[1]
         curs.close()
-        return res_name
+        return data[1]
     # 주문하기 클릭 -> 최소주문 금액 만족하는 check -> ok : ordercode생성 -> order -> order_menu 순서로 등록, 
 
     def show_menu_list(self,restaurant_code): # checkbox에서 뭐받았는지 체크하게끔 run.py에서
@@ -217,9 +209,6 @@ class order(Database):
   
     
         
-    # menu_name을 받아서 cost를 계산하는 함수 (리스트로 받을지,,각각 받아서 각각 계산할지)
-    #menu_name을 어차피 list로 저장할 거니까 list 하나씩 대입하면서 cost바로 계산 
-    #cost를 실행파일에서 계산할지 아니면 여기서..?
    
 
     

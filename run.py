@@ -76,7 +76,7 @@ def select():
 
             Order.restaurant_code=restaurant_code #레스토랑 코드
             Order.minimum_amount=order().minimum_price(Order.restaurant_code) # 최소주문금액
-            Order.res_name=order().get_restaurant_name(restaurant_code) # 레스토랑 이름
+            Order.res_name=order().get_restaurant_name(Order.restaurant_code) # 레스토랑 이름
             return redirect(url_for('ordermenu'))
         else: # 잘못 입력한 경우
             error="존재하지 않는 레스토랑 코드입니다"
