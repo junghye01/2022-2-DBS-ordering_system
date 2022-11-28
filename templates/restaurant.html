@@ -28,7 +28,13 @@
        
             <input type="text" name="restaurant" placeholder="식당코드로 검색하세요."><!--name 속성을 변수로 받으면 됨(restaurant)-->
             <input type="submit" value="검색"/>
-            
+            <p>
+                {% if error==None %}
+                    <h4>&nbsp;</h4>
+                {% else %}
+                    <h4>{{error}}</h4>
+                {% endif %} 
+            </p>
         </form>
     </body>
 </html>

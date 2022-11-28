@@ -71,16 +71,19 @@ def select():
     if request.method=='POST':
         res_list=order().show_rest()
         restaurant_code=request.form.get('restaurant')
+        
+        if order().restaurant_code_exists(restaurant_code): # 존재하면
+
+            Order.restaurant_code=restaurant_code #레스토랑 코드
+            Order.minimum_amount=order().minimum_price(Order.restaurant_code) # 최소주문금액
+            Order.res_name=order().get_restaurant_name(restaurant_code) # 레스토랑 이름
+            return redirect(url_for('ordermenu'))
+        else: # 잘못 입력한 경우
+            error="존재하지 않는 레스토랑 코드입니다"
 
        
-        Order.restaurant_code=restaurant_code
-            
-        Order.res_name=order().get_restaurant_name(restaurant_code)
-        return redirect(url_for('ordermenu'))
 
-       
-
-    return render_template('restaurant.html',res_list=res_list,restaurant_name=Order.res_name)
+    return render_template('restaurant.html',res_list=res_list,restaurant_name=Order.res_name,error=error)
 
 @app.route('/ordermenu',methods=['GET','POST'])
 def ordermenu():
@@ -88,12 +91,11 @@ def ordermenu():
     menu_list=order().show_menu(Order.restaurant_code)
     
     #total_cost=0
-    minimum_amount=order().minimum_price(Order.restaurant_code) # 최소주문금액
-
+    
     if request.method=='POST':
         menu_list=order().show_menu(Order.restaurant_code)
         Order.res_name=order().get_restaurant_name(Order.restaurant_code)
-        Order.minimum_amount=minimum_amount
+        
 
         lst=order().show_menu_list(Order.restaurant_code) # 가게 메뉴 리스트
         lst2=[]
@@ -147,7 +149,7 @@ def ordermenu():
             error='최소주문금액은'+str(Order.minimum_amount)+',주문금액은'+str(Order.total_cost)
 
 
-    return render_template('ordermenu.html',error=error,restaurant_name=Order.res_name,minimum_amount=minimum_amount,menu_list=menu_list )
+    return render_template('ordermenu.html',error=error,restaurant_name=Order.res_name,minimum_amount=Order.minimum_amount,menu_list=menu_list )
 
         
             
