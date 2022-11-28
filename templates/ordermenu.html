@@ -6,38 +6,40 @@
     </head>
     <body id="outer">
         <div id="inner">
-            <form action="{{url_for('')}}" method="POST"></form>
-                <h2>{{restaurant_name}}</h2>
-                <p>최소주문금액:<div id="minimum">{{minimum_amount}}</div></p>
+            <form method="POST" method="authForm">
+                <h2>{{ restaurant_name }}</h2> <!-- show-->
+                <h5>최소주문금액 : {{ minimum_amount }}</h5> <!--show-->
                 <table id="menu_list">
                     <thead>
                         <tr>
-                            <th>주문</th><th>메뉴명</th><th>설명</th><th>가격</th><th>수량</th>
+                            <th>메뉴명</th><th>가격</th><th>수량</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for menu in menus %}
+                        {% for menu in menu_list %}
                         <tr>
                             <td>
-                                <input type="checkbox" value="{{menu.code}}">
+                            <label><input type="checkbox" name="{{menu[2]}}" value="{{menu[2]}}">{{ menu[2] }}</label>   
                             </td>
                             <td>
-                                {{meun.name}}
+                                <label>{{ menu[4] }} </label>
                             </td>
                             <td>
-                                {{menu.description}}
-                            </td>
-                            <td>
-                                {{menu.price}}
-                            </td>
-                            <td>
-                                <input type="text" name="amount" class="amount">
+                                <input type="text" name="{{menu[2]+'1'}}" class="amount" placeholder="수량">
                             </td>
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
-                <button type="submit" id="order_button">주문</button>
+                <button type="submit" name="order_button" value="주문">주문</button>
+                <p>
+                    {% if error==None %}
+                        <h3>&nbsp;</h3>
+                    {% else %}
+                        <h4>{{error}}</h4>
+                    {% endif %}
+                </p>
+                
             </form>
         </div>
     </body>

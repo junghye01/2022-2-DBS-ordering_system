@@ -1,6 +1,6 @@
 import pymysql
 import bcrypt
-from datetime import date
+from datetime import (date,datetime)
 from hashlib import md5
 
 class Database(object):
@@ -47,15 +47,7 @@ class Database(object):
 class signup(Database):
     def __init__(self):
         super().__init__()
-    #... 회원가입할 때 user, account table에 모두 저장
-    #def add_email_data(self,user_email):
-     #   curs=self.order_db.cursor()
-      #  sql="INSERT INTO user(user_email) VALUES (%s)"
-       # curs.execute(sql,user_email)
-        #self.order_db.commit()
-        
-
-        #curs.close()
+    
 
     def add_password(self,user_email,user_password): # insert로 바꿔야됨
         new_salt=bcrypt.gensalt()
@@ -118,39 +110,75 @@ class order(Database):
         else:
             return 0 # 존재하지않으면 0
     
-    def minimum_price(self,restaurant_code):
+    def minimum_price(self,restaurant_code): # 최소주문금액 조회 
         curs=self.order_db.cursor()
         sql="select * from restaurant where restaurant_code=%s"
         curs.execute(sql,restaurant_code)
         data=curs.fetchone()
         curs.close()
+
         return data[5]
         
     def show_rest(self): # 음식점코드, 음식점 이름 보여주기 
         curs=self.order_db.cursor()
-        lst=[]
+        #lst=[]
         sql="select * from restaurant"
         curs.execute(sql)
         res_list=curs.fetchall()
-        for x in res_list:
-            a=[x[0],x[1]]
-            lst.append(a)
+       # for x in res_list:
+        #    a=[x[0],x[1]]
+         #   lst.append(a)
         curs.close()
         return res_list
 
-    def get_restaurant_name(self,restaurant_code):
+    def show_menu(self,restaurant_code):
+        curs=self.order_db.cursor()
+        sql="select * from menu where restaurant_code=%s"
+        curs.execute(sql,restaurant_code)
+        menu_list=curs.fetchall()
+
+        curs.close()
+        return menu_list
+
+    def get_restaurant_name(self,restaurant_code): # 레스토랑 이름 
         curs=self.order_db.cursor()
         sql="select * from restaurant where restaurant_code=%s"
         curs.execute(sql,restaurant_code)
         data=curs.fetchone()
-        res_name=data[1]
+        #res_name=data[1]
         curs.close()
-        return res_name
+        return data[1]
     # 주문하기 클릭 -> 최소주문 금액 만족하는 check -> ok : ordercode생성 -> order -> order_menu 순서로 등록, 
+
+    def show_menu_list(self,restaurant_code): # checkbox에서 뭐받았는지 체크하게끔 run.py에서
+        lst=[]
+        curs=self.order_db.cursor()
+        sql="select * from menu where restaurant_code=%s"
+        curs.execute(sql,restaurant_code)
+        data=curs.fetchall()
+        curs.close()
+        for x in data:
+            lst.append(x[2])
+
+        return lst
+
+    def calculate_cost(self,menu,count): #menu, 수량 list로 받음
+        curs=self.order_db.cursor()
+        cost=[]
+        result=0
+        for i in range(len(menu)): 
+            sql="select * from menu where menu_name=%s"
+            curs.execute(sql,menu[i])
+            data=curs.fetchone()
+            result=data[4]*int(count[i])
+            cost.append(result)
+
+        curs.close()
+        return cost
 
     #최소 주문금액 : 금액합치는 건 실행파일에서 하고, 해당 레스토랑 코드의 최소주문금액과 비교
     def compare_minimum_price(self,price,restaurant_code):
-        curs=self.order_db.cursor()
+        curs=self.order_db.cursor(pymysql.cursors.DictCursor)
         sql="select * from restaurant where restaurant_code= %s"
         curs.execute(sql,restaurant_code)
         data=curs.fetchone()
@@ -165,48 +193,23 @@ class order(Database):
         sql="select * from user where user_email=%s"
         curs.execute(sql,user_email)
         data=curs.fetchone()
-        key = md5(data['user_name'].encode('utf8')).hexdigest()
+        key = md5(data[1].encode('utf8')).hexdigest()
+        key=key+str(datetime.now()).replace(':','')[11:-7]
         return key
 
-    def add_order_data(self,order_code,user_email,restaurant_code):
+    def add_order_data(self,order_code,user_email,date,restaurant_code):
         # 여기에 date까지 1 page에서는 4개 칼럼값만 추가
         curs=self.order_db.cursor()
-        today=str(date.today())
-        sql="INSERT INTO order(order_code,user_email,date,restaurant_code) VALUES (%s,%s,%s,%s)"
-        curs.execute(sql,(order_code,user_email,today,restaurant_code))
+        
+        sql="INSERT INTO `order`(order_code,user_email,`date`,restaurant_code) VALUES (%s,%s,%s,%s)"
+        curs.execute(sql,(order_code,user_email,date,restaurant_code))
         self.order_db.commit()
         curs.close()
 
-    # menu list 반환 
-    def menu_list(self,restaurant_code): # checkbox에서 뭐받았는지 체크하게끔 run.py에서
-        lst=[]
-        curs=self.order_db.cursor()
-        sql="select * from menu where restaurant_code=%s"
-        curs.execute(sql,restaurant_code)
-        data=curs.fetchall()
+  
+    
         
-        for x in data:
-            lst.append(data[2])
-
-        return lst
-        
-    # menu_name을 받아서 cost를 계산하는 함수 (리스트로 받을지,,각각 받아서 각각 계산할지)
-    #menu_name을 어차피 list로 저장할 거니까 list 하나씩 대입하면서 cost바로 계산 
-    #cost를 실행파일에서 계산할지 아니면 여기서..?
-    def calculate_cost(self,menu,count): #menu, 수량 list로 받음
-        curs=self.order_db.cursor()
-        cost=[]
-        result=0
-        for i in enumerate(menu): 
-            sql="select * from menu where menu_name=%s"
-            curs.execute(sql,menu[i])
-            data=curs.fetchone()
-            result=data[4]*count[i]
-            cost.append(result)
-
-        curs.close()
-        return cost
-
+   
 
     
     def add_order_menu(self,order_code,menu_code,amount,cost): #order menu table에 추가
@@ -217,7 +220,47 @@ class order(Database):
         self.order_db.commit()
         curs.close()
 
-    
+    def show_coupon_code(self):
+        curs=self.order_db.cursor()
+        sql="select * from coupon"
+        curs.execute(sql)
+        data=curs.fetchall()
+        curs.close()
+        return data
+
+    def get_discount(self,coupon_code):
+        curs=self.order_db.cursor()
+        sql="select * from coupon where coupon_code=%s"
+        curs.execute(sql,coupon_code)
+        data=curs.fetchone()
+        return data[1]
+
+    def get_menucode(self,menu_lst): # checkbox에서 뭐받았는지 체크하게끔 run.py에서
+        lst=[]
+        curs=self.order_db.cursor()
+        for x in menu_lst:
+            sql="select * from menu where menu_name=%s"
+            curs.execute(sql,x)
+            data=curs.fetchone()
+            lst.append(data[0])
+        curs.close()
+
+        return lst
+
+    def update_order(self,order_code,address,request,coupon_code):
+        curs=self.order_db.cursor()
+        sql="update `order` set address= %s, requests=%s,coupon_code=%s where order_code=%s"
+        curs.execute(sql,(address,request,coupon_code,order_code))
+        self.order_db.commit()
+        curs.close()
+
+    def add_payment_data(self,order_code,method,price):
+        curs=self.order_db.cursor()
+        sql="insert into payment(order_code,payment_method,payment_amount) values (%s,%s,%s)"
+        curs.execute(sql,(order_code,method,price))
+        self.order_db.commit()
+        curs.close()
+
 
     
 

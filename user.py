@@ -16,10 +16,18 @@ class Order:
     address=''
     request=''
     restaurant_code=''
-    res_name=''
+    res_name=""
     coupon_code=''
-    res_name=''
-
+    minimum_amount=0
+    cost=[]
+    total_cost=0
+    menu_code=[]
+    discount_price=0
+    textrequest=''
+    address=''
+    payment=''
+    payment_amount=0
+    final_list=[]
 
     
     
