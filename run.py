@@ -5,7 +5,7 @@ from datetime import date
 app=Flask(__name__)
 
 
-# 로그인 잘못했을 때 어떻게 할지...
+
 #
 @app.route('/',methods=['GET','POST'])
 def main(): 
@@ -99,7 +99,7 @@ def ordermenu():
 
         lst=order().show_menu_list(Order.restaurant_code) # 가게 메뉴 리스트
         lst2=[]
-        text_list=['t'+str(i) for i in range(len(lst))] # 이름만 텍스트상자별로 다르게 
+        
         amount_list=[]
         for x in lst:
             if request.form.get(x):
@@ -123,14 +123,12 @@ def ordermenu():
             new_list=[lst2[i],amount_list[i]]
             Order.final_list.append(new_list)
                 
-        #print(lst)
-        #print(lst2)
-        #print(amount_list)
+        
         
         cost=order().calculate_cost(lst2,amount_list) # 각 메뉴마다 금액
-        #print(cost)
+        
         Order.total_cost=sum(cost) # 총 주문금액
-        #print(Order.total_cost)
+        
         
         if order().compare_minimum_price(Order.total_cost,Order.restaurant_code): #최소주문금액만족
             Order.order_code=order().make_ordercode(User.email) #주문코드 생성
@@ -139,11 +137,11 @@ def ordermenu():
             order().add_order_data(Order.order_code,User.email,Order.date,Order.restaurant_code)
             # 
             Order.menu_code=order().get_menucode(lst2)
-            for i in range(len(lst2)):
+            for i in range(len(lst2)): # 메뉴 하나씩 order_menu테이블에 저장
                 order().add_order_menu(Order.order_code,Order.menu_code[i],amount_list[i],cost[i])
 
 
-            return (redirect(url_for('final'))) # 주문목록 확인 및 결제창
+            return (redirect(url_for('final'))) # 요청사항,결제수단 입력 창으로 이동
 
         else:
             error='최소주문금액은'+str(Order.minimum_amount)+',주문금액은'+str(Order.total_cost)
@@ -173,7 +171,7 @@ def final():
         Order.payment=payment
         #order 테이블엔 address,request,coupon_code update
         order().update_order(Order.order_code,address,textrequest,coupon_code)
-        #payment에는 싹다 insert
+        #payment에는 다 insert
         order().add_payment_data(Order.order_code,payment,Order.total_cost)
         return redirect(url_for('realfinal'))
 
