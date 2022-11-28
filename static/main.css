@@ -1,0 +1,22 @@
+#outer{
+    text-align: center;
+}
+#inner{
+    display:inline-block;
+    text-align: initial;
+}
+table{
+    border:1px solid darkgray; border-collapse: collapse;
+}
+.amount{
+    width:30px;
+}
+th,td{
+    padding:10px;
+}
+#order_button{
+    margin-top:20px;
+}
+form>div{
+    margin-bottom: 10px;
+}

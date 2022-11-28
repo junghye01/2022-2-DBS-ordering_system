@@ -26,4 +26,3 @@ print("Number of orders: "+str(result[0][0]))#Shows the number of orders receive
 
 cursor.close()
 cnx.close() 
-

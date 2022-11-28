@@ -11,7 +11,7 @@
                   <th>주소</th>
                   <th>요청사항</th>
                   <th>결제방식</th>
-                  <th>결제금액</th>
+                  
 
                </center>
             </tr>
@@ -22,10 +22,31 @@
             <td><center>{{address}}</center></td>
             <td><center>{{textrequest}}</center></td>
             <td><center>{{payment}}</center></td>
-            <td><center>{{payment_amount}}</center></td>
+            
          </tbody>
       </table>
-        
+      <table class="table table-hover table-striped text-center" style=" width: 50%; border: 1px  solid #111114;">
+         <thead>
+            <tr>
+               <center>
+                  <th>주문메뉴</th>
+                  <th>수량</th>
+               </center>
+            </tr>
+         </thead>
+         <tbody>
+            {% for x in final_list %}
+            <tr>
+               <td><center>{{ x[0] }}</center></td>
+               <td><center>{{ x[1] }}</center></td>
+            </tr>
+               
+            {% endfor %}
+         </tbody>
+      </table>
+      <p><h4>주문금액 : {{total_cost}}</h4></p>
+      <p><h4>할인금액 : {{discount_price}}</h4></p>
+      <p><h4>결제금액: {{payment_amount}}</h4></p>
       <p><input type = button style="WIDTH: 183pt; background-color:transparent;" value = "결제" name="pay" onclick="location.href=
          'select'" /></p>
    </body>
