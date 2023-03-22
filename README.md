@@ -37,6 +37,7 @@ You can check the menu you want, enter the amount, and order.
 
 ![image](https://user-images.githubusercontent.com/109332374/227059728-7a68e48d-bee8-4df4-a54b-d9dcf8432b98.png)
 
+### Requiring the minimum order amount
 If the payment amount is less than the minimum order amount, the following message will appear.
 ![image](https://user-images.githubusercontent.com/109332374/227059780-98ea06fc-54bd-4301-b99f-36f52bd314f4.png)
 ![image](https://user-images.githubusercontent.com/109332374/227059793-92cc0592-8427-4645-b8a6-de17f9b7a3af.png)
